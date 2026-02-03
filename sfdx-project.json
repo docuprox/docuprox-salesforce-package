@@ -1,0 +1,21 @@
+{
+  "packageDirectories": [
+    {
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "path": "force-app",
+      "default": true,
+      "package": "Docuprox",
+      "versionDescription": ""
+    }
+  ],
+  "name": "Docuprox",
+  "namespace": "dcprx",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "65.0",
+  "packageAliases": {
+    "Docuprox": "0HodN0000000A7RSAU",
+    "Docuprox@0.1.0-1": "04tdN000000IxEXQA0",
+    "Docuprox@0.1.0-2": "04tdN000000IxUfQAK"
+  }
+}
