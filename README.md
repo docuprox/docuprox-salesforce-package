@@ -9,6 +9,10 @@ This Salesforce DX project contains the integration logic for connecting Salesfo
 - **Flexible Configuration**: Managed via Hierarchy Custom Settings and/or Named Credentials.
 - **Secure Integration**: Uses protected custom settings for storing API keys and endpoints.
 
+## Demo
+
+[Watch the Demo Video](https://www.youtube.com/watch?v=WeUkBJPql_0&t=60s)
+
 ## Components
 
 ### Classes
@@ -34,6 +38,8 @@ This Salesforce DX project contains the integration logic for connecting Salesfo
 ## Installation
 
 To install the **Docuprox** unlocked package, use the Salesforce CLI command below or the installation URL provided for the specific version.
+
+**Installation URL:** [Install Package](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tdN000000IxUfQAK)
 
 ```bash
 sf package install --package "Docuprox" --target-org <target-org-alias> --wait 10
