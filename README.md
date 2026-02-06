@@ -42,7 +42,7 @@ To install the **Docuprox** unlocked package, use the Salesforce CLI command bel
 **Installation URL:** [Install Package](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tdN000000IxUfQAK)
 
 ```bash
-sf package install --package "Docuprox" --target-org <target-org-alias> --wait 10
+sf package install --package 04tdN000000IxUfQAK --target-org <target-org-alias> --wait 10
 ```
 
 ## Post-Installation Configuration
