@@ -6,6 +6,10 @@
         <active>true</active>
         <name>aysncdocuprox</name>
     </operations>
+    <operations>
+        <active>true</active>
+        <name>syncdocuprox</name>
+    </operations>
     <registrationProviderType>Custom</registrationProviderType>
     <schema>openapi: 3.0.0
 info:
@@ -49,6 +53,131 @@ paths:
       responses:
         &apos;202&apos;:
           description: Accepted - Request successfully queued for processing
+          content:
+            application/json:
+              schema:
+                type: string
+
+        &apos;400&apos;:
+          description: Bad Request - Invalid input or missing parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+
+        &apos;401&apos;:
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+
+        &apos;403&apos;:
+          description: Forbidden - Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+
+        &apos;404&apos;:
+          description: Not Found - Template ID not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+
+        &apos;415&apos;:
+          description: Unsupported Media Type - Content-Type must be application/octet-stream
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+
+        &apos;429&apos;:
+          description: Too Many Requests - Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+
+        &apos;500&apos;:
+          description: Internal Server Error - Unexpected error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+
+        &apos;503&apos;:
+          description: Service Unavailable - Service temporarily unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+
+  /v1/process:
+    put:
+      summary: Sync Callout for Docuprox
+      operationId: syncDocuprox
+      parameters:
+        - in: query
+          name: t_id
+          required: true
+          schema:
+            type: string
+          description: Template Id of the template configured in Docuprox portal.
+
+      requestBody:
+        description: Raw PDF file bytes
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+
+      responses:
+        &apos;200&apos;:
+          description: Success
           content:
             application/json:
               schema:
