@@ -12,7 +12,7 @@ Ver   Date         Author                               Modification
 global with sharing class DocuproxService {
     /*
     *********************************************************
-    @Method Name    : processWithFile
+    @Method Name    : sendToDocuprox
     @author         : Uddhav Sharma
     @description    : Processes a file from ContentDocumentId, converts it to Base64, and sends to API.
     @param          : Id contentDocumentId - The Id of the ContentDocument
@@ -20,7 +20,7 @@ global with sharing class DocuproxService {
     @return         : String - The response body from the API.
     *********************************************************
     */
-    global static String processWithFile(Id contentDocumentId, String templateId) {
+    global static String sendToDocuprox(Id contentDocumentId, String templateId) {
         try {
             ExternalService.DocuproxAsync myService = new ExternalService.DocuproxAsync();
             ExternalService.DocuproxAsync.syncDocuprox_Request request = new ExternalService.DocuproxAsync.syncDocuprox_Request();
