@@ -1,14 +1,14 @@
 /*
-*********************************************************
-Apex Class Name    : DocuproxAsyncService
-Created Date       : April 04, 2026
-@description       : This class handles is the primary service class for Async callouts to Docuprox.
-@author            : uddhav.sharma@xccelerance.com
-Modification Log:
-Ver   Date         Author                               Modification
-1.0   04-04-2026   Uddhav Sharma                      Initial Version
-*********************************************************
-*/
+ *********************************************************
+ Apex Class Name    : DocuproxAsyncService
+ Created Date       : April 04, 2026
+ @description       : This class handles is the primary service class for Async callouts to Docuprox.
+ @author            : uddhav.sharma@xccelerance.com
+ Modification Log:
+ Ver   Date         Author                               Modification
+ 1.0   04-04-2026   Uddhav Sharma                      Initial Version
+ *********************************************************
+ */
 global with sharing class DocuproxAsyncService {
     /*
     *********************************************************
@@ -30,17 +30,17 @@ global with sharing class DocuproxAsyncService {
 
         try {
             // Call the registered External Service for Docuprox Async callout
-            ExternalService.DocuproxAsync myService = new ExternalService.DocuproxAsync();
-            ExternalService.DocuproxAsync.aysncDocuprox_Request request = new ExternalService.DocuproxAsync.aysncDocuprox_Request();
+            ExternalService.dcprx.DocuproxAsync myService = new ExternalService.dcprx.DocuproxAsync();
+            ExternalService.dcprx.DocuproxAsync.aysncDocuprox_Request request = new ExternalService.dcprx.DocuproxAsync.aysncDocuprox_Request();
             request.tx5fid = templateId;
             request.body = contentDocumentId;
 
             if (String.isNotBlank(staticValues))
                 request.staticx5fvalues = staticValues;
 
-            ExternalService.DocuproxAsync.aysncDocuprox_Response response = myService.aysncDocuprox(request);
+            ExternalService.dcprx.DocuproxAsync.aysncDocuprox_Response response = myService.aysncDocuprox(request);
             return response.Code202 != null ? response.Code202 : null;
-        } catch (ExternalService.DocuproxAsync.aysncDocuprox_ResponseException e) {
+        } catch (ExternalService.dcprx.DocuproxAsync.aysncDocuprox_ResponseException e) {
             throw e;
         } catch (DocuproxAsyncException e) {
             throw e;

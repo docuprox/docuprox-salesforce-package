@@ -22,15 +22,15 @@ global with sharing class DocuproxService {
     */
     global static String sendToDocuprox(Id contentDocumentId, String templateId) {
         try {
-            ExternalService.DocuproxAsync myService = new ExternalService.DocuproxAsync();
-            ExternalService.DocuproxAsync.syncDocuprox_Request request = new ExternalService.DocuproxAsync.syncDocuprox_Request();
+            ExternalService.dcprx.DocuproxAsync myService = new ExternalService.dcprx.DocuproxAsync();
+            ExternalService.dcprx.DocuproxAsync.syncDocuprox_Request request = new ExternalService.dcprx.DocuproxAsync.syncDocuprox_Request();
             request.tx5fid = templateId;
             request.body = contentDocumentId;
 
             // Make the callout and return the filled PDF's ContentDocumentId
-            ExternalService.DocuproxAsync.syncDocuprox_Response response = myService.syncDocuprox(request);
+            ExternalService.dcprx.DocuproxAsync.syncDocuprox_Response response = myService.syncDocuprox(request);
             return response.Code200 != null ? response.Code200 : null;
-        } catch (ExternalService.DocuproxAsync.syncDocuprox_ResponseException e) {
+        } catch (ExternalService.dcprx.DocuproxAsync.syncDocuprox_ResponseException e) {
             throw e;
         } catch (Exception e) {
             throw new DocuproxAsyncService.DocuproxAsyncException(
