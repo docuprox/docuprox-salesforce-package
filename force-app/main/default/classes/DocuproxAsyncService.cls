@@ -55,7 +55,7 @@ global with sharing class DocuproxAsyncService {
     @author         : Uddhav Sharma
     @description    : Queries the Docuprox Async API for the current status of a previously submitted job.
     @param          : String jobId - The UUID of the job to check status for
-    @return         : String - The response body containing job status, or null if the request fails
+    @return         : String - The response body containing job status
     *********************************************************
     */
     global static String getJobStatus(String jobId) {
@@ -84,7 +84,7 @@ global with sharing class DocuproxAsyncService {
     @description    : Retrieves the results of a completed Docuprox job in the specified format.
     @param          : String jobId - The UUID of the completed job
     @param          : String resultFormat - (Optional) Output format: "json" (default) or "csv"
-    @return         : String - The response body containing job results, or null if the request fails
+    @return         : String - The response body containing job results
     *********************************************************
     */
     global static String getResult(String jobId, String resultFormat) {
