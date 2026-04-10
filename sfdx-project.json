@@ -1,12 +1,20 @@
 {
   "packageDirectories": [
     {
+      "path": "force-app",
+      "default": false,
+      "package": "Docuprox123",
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "versionDescription": "Base package for Docuprox"
+    },
+    {
       "versionName": "ver 0.1",
       "versionNumber": "0.1.0.NEXT",
       "path": "force-app",
       "default": true,
       "package": "Docuprox",
-      "versionDescription": ""
+      "versionDescription": "DocuProx Unlocked Package"
     }
   ],
   "name": "Docuprox",
@@ -14,8 +22,11 @@
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "65.0",
   "packageAliases": {
-    "Docuprox": "0HodN0000000A7RSAU",
-    "Docuprox@0.1.0-1": "04tdN000000IxEXQA0",
-    "Docuprox@0.1.0-2": "04tdN000000IxUfQAK"
+    "Docuprox123": "0HodN0000000A7RSAU",
+    "Docuprox123@0.1.0-1": "04tdN000000IxEXQA0",
+    "Docuprox123@0.1.0-2": "04tdN000000IxUfQAK",
+    "Docuprox": "0HoT100000000JNKAY",
+    "Docuprox@0.1.0-1": "04tT1000000KJkrIAG",
+    "Docuprox@0.1.0-2": "04tT1000000KJmTIAW"
   }
 }
