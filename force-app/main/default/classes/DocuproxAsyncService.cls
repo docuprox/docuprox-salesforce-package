@@ -21,31 +21,27 @@ global with sharing class DocuproxAsyncService {
      * @param          : String format - Result format (json/csv)
      */
     global static void startAsyncProcess(Id contentDocumentId, String templateId, String staticValues, String metadataName, String format) {
-        String callbackClassName = '';
+        System.debug('Docuprox [Service]: Starting Async Process for Document: ' + contentDocumentId);
+
+        // Create a new Log record to track the process
+        DP_Log__c log = new DP_Log__c();
+        log.CDId__c = contentDocumentId;
+        log.Template_Id__c = templateId;
+        log.Static_Value__c = staticValues;
+        log.Metadata_Name__c = metadataName;
+        log.Format__c = format;
+        log.Status__c = 'Enqueued';
+        log.Callouts__c = 0;
         
-        try {
-            // Querying the Custom Metadata Type using the provided DeveloperName
-            // We check both MasterLabel and DeveloperName to be user-friendly
-            List<dcprx__Docuprox_Callback_Setting__mdt> settings = [
-                SELECT dcprx__Class_Name__c 
-                FROM dcprx__Docuprox_Callback_Setting__mdt 
-                WHERE DeveloperName = :metadataName 
-                LIMIT 1
-            ];
+        insert log;
 
-            if (settings.isEmpty()) {
-                throw new DocuproxAsyncException('No Docuprox Callback Setting found with name: ' + metadataName);
-            }
-            
-            callbackClassName = settings[0].Class_Name__c;
-        } catch (Exception e) {
-            throw new DocuproxAsyncException('Error retrieving Callback Metadata: ' + e.getMessage());
-        }
 
-        // Start the Batch process with the class name retrieved from Metadata
-        DocuproxUserBatch batch = new DocuproxUserBatch(contentDocumentId, templateId, staticValues, callbackClassName, format);
+        // Start the Batch process which will pick up this specific log
+        DocuproxUserBatch batch = new DocuproxUserBatch(log.Id);
         Database.executeBatch(batch, 1);
+
     }
+
 
     /*
     *********************************************************
@@ -141,7 +137,7 @@ global with sharing class DocuproxAsyncService {
 
             req.setBody(JSON.serialize(body));
 
-            Http http = new Http();
+            Http http = new Http(); 
             HttpResponse res = http.send(req);
 
             return res.getStatusCode() == 200 ? res.getBody() : null;
