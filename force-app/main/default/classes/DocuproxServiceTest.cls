@@ -24,7 +24,7 @@ private class DocuproxServiceTest {
 
         // Call Service
         Test.startTest();
-        String result = DocuproxService.sendToDocuprox(contentDocId, 'template-123');
+        String result = DocuproxService.sendToDocuprox(contentDocId, 'template-123', '{"city":"rt"}');
         Test.stopTest();
 
         // Assertions
@@ -50,7 +50,7 @@ private class DocuproxServiceTest {
 
         Test.startTest();
         try {
-            DocuproxService.sendToDocuprox(contentDocId, 'template-123');
+            DocuproxService.sendToDocuprox(contentDocId, 'template-123', '{"city":"rt"}');
             // Depending on how the External Service is generated, it might throw syncDocuprox_ResponseException or just return response with null Code200
         } catch (Exception e) {
             System.assert(e.getMessage().contains('Docuprox sync callout failed') || e.getTypeName().contains('ResponseException'), 

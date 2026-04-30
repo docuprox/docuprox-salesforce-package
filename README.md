@@ -1,83 +1,91 @@
 # Docuprox Salesforce Integration
 
-This Salesforce DX project contains the integration logic for connecting Salesforce with the Docuprox API. It provides a service class to handle document processing by sending files or base64 data to the Docuprox endpoint using configured templates.
+This Salesforce DX project contains the integration logic for connecting Salesforce with the Docuprox API. It supports both synchronous and robust asynchronous workflows for document processing.
 
 ## Features
 
 - **File Processing**: Directly process Salesforce Files (`ContentDocument`) by converting them to Base64 and sending them to Docuprox.
-- **Base64 Processing**: Support for processing raw base64 encoded strings.
-- **Flexible Configuration**: Managed via Hierarchy Custom Settings and/or Named Credentials.
-- **Secure Integration**: Uses protected custom settings for storing API keys and endpoints.
-
-## Demo
-
-[Watch the Demo Video](https://www.youtube.com/watch?v=WeUkBJPql_0&t=60s)
+- **Synchronous Workflow**: Immediate document processing using `DocuproxService` with support for static values.
+- **Asynchronous Workflow**: A state-machine based workflow using `DocuproxUserBatch` for long-running document generation tasks.
+- **Status Tracking**: Track the lifecycle of each request (Enqueued, Submit, Pending, Success, Completed, Error) via the `DP_Log__c` object.
+- **Callback Support**: Dynamically process results using custom handler classes defined in `Docuprox_Callback_Setting__mdt`.
+- **Secure Integration**: Managed via Named Credentials (`Docuprox_Async`) and External Services for seamless API connectivity.
 
 ## Components
 
-### Classes
+### Core Classes
 
-- **`DocuproxService`**: Global service class containing methods to interact with the API.
-    - `processWithFile(Id contentDocumentId, String templateId)`: Retrieves the latest `ContentVersion` for a given document ID, encodes it, and sends it for processing.
-    - `processWithBase64`: Processes raw base64 data.
+- **`DocuproxService`**: Handles synchronous callouts to the Docuprox API.
+    - `sendToDocuprox(Id contentDocumentId, String templateId, String staticValues)`: Directly processes a file and returns the API response body containing the generated document ID.
+- **`DocuproxAsyncService`**: Orchestrates callouts to the Docuprox Async API.
+    - `processDocument(Id fileId, String templateId, String staticValues)`: Initiates the document generation request.
+    - `getJobStatus(String jobId)`: Polls the API for the current status of a job.
+    - `getResult(String jobId, String format)`: Retrieves the final processed result.
+- **`DocuproxUserBatch`**: A stateful batch class that manages the lifecycle of a request, including automatic polling and callback invocation.
+- **`DocuproxResultHandler`**: Interface used for creating custom callback processors.
 
-### Custom Objects / Settings
+### Custom Metadata & Objects
 
-- **`Docuprox__c`**: A Hierarchy Custom Setting used to store integration details.
-    - `API_Key__c`: The API key for authentication.
-    - `Endpoint_URL__c`: The target URL for the Docuprox API.
-    - `Named_Credential__c`: Name of the Named Credential to use (if applicable).
-
-### Permissions
-
-- **`Docuprox User`**: Permission set that grants access to the `DocuproxService` class.
-
-### Remote Site Settings
-- **`DocuproxProd`**: Whitelists the production endpoint for callouts.
+- **`DP_Log__c`**: Tracks every processing request.
+    - `Status__c`: Current state (e.g., Submit, Success, Completed).
+    - `Job_Id__c`: The unique job identifier from Docuprox.
+- **`Docuprox_Callback_Setting__mdt`**: Maps a configuration name to a specific Apex class that implements `DocuproxResultHandler`.
 
 ## Installation
 
-To install the **Docuprox** unlocked package, use the Salesforce CLI command below or the installation URL provided for the specific version.
+To install the **Docuprox** unlocked package:
 
-**Installation URL:** [Install Package](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tdN000000IxUfQAK)
+**Installation URL:** [Install Package](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tT1000000LLCjIAO)
 
 ```bash
-sf package install --package 04tdN000000IxUfQAK --target-org <target-org-alias> --wait 10
+sf package install --package 04tT1000000LLCjIAO --target-org <target-org-alias> --wait 10
 ```
-
-## Post-Installation Configuration
-
-After the package is successfully installed, you must configure the custom settings and permissions.
-
-1.  **Configure Custom Setting**:
-    - Navigate to **Setup** > **Custom Code** > **Custom Settings**.
-    - Click **Manage** next to **Docuprox**.
-    - Click **New** above the "Default Organization Level Value" section to create a global setting (or create Profile/User specific instances if needed).
-    - Enter your `API Key` and `Endpoint URL`.
-    - *(Optional)* Define the `Named Credential` if you are using one.
-    - Click **Save**.
-
-2.  **Assign Permissions**:
-    Assign the `Docuprox User` permission set to users who need to trigger document generation.
-    - Go to **Setup** > **Users** > **Permission Sets**.
-    - Select the **Docuprox User** permission set.
-    - Click **Manage Assignments** > **Add Assignments**.
-    - Select the users and click **Assign**.
 
 ## Usage
 
-You can call the service from Apex (Triggers, Controllers, or Flow via Invocable Methods if implemented).
+### Synchronous Processing Example
 
-### Example: Processing a File
+You can initiate the synchronous workflow for immediate document generation using the `DocuproxService` class.
 
 ```apex
-Id fileId = '069xxxxxxxxxxxx'; // ContentDocumentId
-String templateId = 'template_123';
+// Direct synchronous call to Docuprox
+String responseBody = dcprx.DocuproxService.sendToDocuprox(
+    '069xxxxxxxxxxxx', // ContentDocumentId
+    'my_template',     // Template ID
+    '{"key":"value"}'  // Static Values (JSON string)
+);
 
-try {
-    String response = DocuproxService.processWithFile(fileId, templateId);
-    System.debug('Response: ' + response);
-} catch (Exception e) {
-    System.debug('Error: ' + e.getMessage());
+System.debug('Sync Response: ' + responseBody);
+```
+
+### Asynchronous Processing Example
+
+You can initiate the asynchronous workflow by creating a `DP_Log__c` record and starting the batch.
+
+```apex
+// 1. Create the Log record
+dcprx__DP_Log__c log = new dcprx__DP_Log__c(
+    dcprx__CDId__c = '069xxxxxxxxxxxx', // ContentDocumentId
+    dcprx__Template_Id__c = 'my_template',
+    dcprx__Status__c = 'Enqueued',
+    dcprx__Metadata_Name__c = 'MyCallbackConfig'
+);
+insert log;
+
+// 2. Start the Batch process
+dcprx.DocuproxUserBatch batch = new dcprx.DocuproxUserBatch(log.Id);
+Database.executeBatch(batch, 1);
+```
+
+### Implementing a Callback Handler
+
+Create a class that implements the `DocuproxResultHandler` interface to process results automatically when the job is completed.
+
+```apex
+public class MyResultProcessor implements dcprx.DocuproxResultHandler {
+    public void execute(String resultJson) {
+        // Your logic to handle the processed document data
+        System.debug('Received Result: ' + resultJson);
+    }
 }
 ```

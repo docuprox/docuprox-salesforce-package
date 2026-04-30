@@ -166,6 +166,13 @@ paths:
             type: string
           description: Template Id of the template configured in Docuprox portal.
 
+        - in: header
+          name: static_values
+          required: false
+          schema:
+            type: string
+          description: JSON string of static key-value pairs.
+
       requestBody:
         description: Raw PDF file bytes
         required: true
