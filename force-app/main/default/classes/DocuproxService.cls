@@ -20,12 +20,16 @@ global with sharing class DocuproxService {
     @return         : String - The response body from the API.
     *********************************************************
     */
-    global static String sendToDocuprox(Id contentDocumentId, String templateId) {
+    global static String sendToDocuprox(Id contentDocumentId, String templateId, String staticValues) {
         try {
             ExternalService.dcprx.DocuproxAsync myService = new ExternalService.dcprx.DocuproxAsync();
             ExternalService.dcprx.DocuproxAsync.syncDocuprox_Request request = new ExternalService.dcprx.DocuproxAsync.syncDocuprox_Request();
             request.tx5fid = templateId;
             request.body = contentDocumentId;
+
+            if (String.isNotBlank(staticValues)) {
+                request.staticx5fvalues = staticValues;
+            }
 
             // Make the callout and return the filled PDF's ContentDocumentId
             ExternalService.dcprx.DocuproxAsync.syncDocuprox_Response response = myService.syncDocuprox(request);
